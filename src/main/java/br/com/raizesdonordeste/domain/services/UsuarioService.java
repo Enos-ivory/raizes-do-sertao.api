@@ -1,5 +1,8 @@
 package br.com.raizesdonordeste.domain.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import br.com.raizesdonordeste.domain.model.Usuario;
 import br.com.raizesdonordeste.domain.infra.repositories.UsuarioRepository;
 import org.mindrot.jbcrypt.BCrypt;
@@ -9,6 +12,14 @@ import java.util.List;
 
 @Service
 public class UsuarioService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
+
+    public List<Usuario> listarTodos() {
+        // Registro de log para conformidade LGPD
+        logger.info("ACESSO SENSÍVEL: Lista de utilizadores consultada para fins de auditoria.");
+        return repository.findAll();
+    }
 
     @Autowired
     private UsuarioRepository repository;
@@ -20,7 +31,15 @@ public class UsuarioService {
         repository.save(usuario);
     }
 
-    public List<Usuario> listarTodos() {
-        return repository.findAll();
+    public void anonimizarUsuario(Long id) {
+        repository.findById(id).ifPresent(usuario -> {
+            usuario.setNome("USUÁRIO ANONIMIZADO");
+            usuario.setEmail("anonimo@raizesdonordeste.com");
+            usuario.setSenha("********"); // Remove o hash original
+            repository.save(usuario);
+            logger.warn("LGPD: Dados do utilizador ID {} foram anonimizados.", id);
+        });
     }
+
+
 }
