@@ -5,6 +5,8 @@ import br.com.raizesdonordeste.domain.enums.StatusPedido;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "pedidos")
@@ -13,6 +15,9 @@ public class Pedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
+    private List<ItemPedido> itens = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

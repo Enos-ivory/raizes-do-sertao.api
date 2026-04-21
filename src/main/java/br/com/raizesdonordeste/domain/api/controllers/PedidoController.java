@@ -1,5 +1,5 @@
 package br.com.raizesdonordeste.domain.api.controllers;
-
+import br.com.raizesdonordeste.domain.enums.StatusPedido;
 import br.com.raizesdonordeste.domain.api.dtos.PedidoRequestDTO;
 import br.com.raizesdonordeste.domain.services.PedidoService;
 import br.com.raizesdonordeste.domain.entities.Pedido;
@@ -36,5 +36,14 @@ public class PedidoController {
             return ResponseEntity.ok(pedidoRepository.findByCanalPedido(canalPedido));
         }
         return ResponseEntity.ok(pedidoRepository.findAll());
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<Pedido> atualizarStatus(@PathVariable Long id, @RequestBody StatusPedido novoStatus) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+
+        pedido.setStatus(novoStatus);
+        return ResponseEntity.ok(pedidoRepository.save(pedido));
     }
 }

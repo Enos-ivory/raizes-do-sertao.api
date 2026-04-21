@@ -15,7 +15,7 @@ public class Usuario {
     private String nome;
     private String email;
     private String senha; // Aqui vai o Hash!
-
+    private String perfil;
     // Requisito LGPD: Demonstração de consentimento
     private boolean consentimentoTermos; // true se aceitou
     private LocalDateTime dataConsentimento;
