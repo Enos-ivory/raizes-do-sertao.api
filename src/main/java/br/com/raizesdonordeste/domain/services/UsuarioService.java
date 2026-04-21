@@ -31,6 +31,11 @@ public class UsuarioService {
         repository.save(usuario);
     }
 
+    public Usuario buscarPorId(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado com o ID: " + id));
+    }
+
     public void anonimizarUsuario(Long id) {
         repository.findById(id).ifPresent(usuario -> {
             usuario.setNome("USUÁRIO ANONIMIZADO");

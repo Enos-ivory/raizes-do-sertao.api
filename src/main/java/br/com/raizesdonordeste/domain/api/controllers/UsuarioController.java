@@ -23,4 +23,10 @@ public class UsuarioController {
     public List<Usuario> listar(){
        return service.listarTodos();
    }
+
+    // === NOVO MÉTODO PARA BUSCAR POR ID ===
+    @GetMapping("/{id}")
+    public Usuario buscarPorId(@PathVariable Long id) {
+        return service.buscarPorId(id);
+    }
 }

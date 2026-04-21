@@ -4,6 +4,7 @@ import br.com.raizesdonordeste.domain.enums.CanalPedido;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
+import java.util.List;
 
 public class PedidoRequestDTO {
 
@@ -20,6 +21,13 @@ public class PedidoRequestDTO {
     @NotNull(message = "A formaPagamento é obrigatória")
     private String formaPagamento;
 
+    // Novo campo para os itens do pedido
+    private List<ItemPedidoRequestDTO> itens;
+
+    // Getters e Setters
+    public List<ItemPedidoRequestDTO> getItens() { return itens; }
+    public void setItens(List<ItemPedidoRequestDTO> itens) { this.itens = itens; }
+
     public CanalPedido getCanalPedido() { return canalPedido; }
     public void setCanalPedido(CanalPedido canalPedido) { this.canalPedido = canalPedido; }
     public Long getClienteId() { return clienteId; }
@@ -28,4 +36,15 @@ public class PedidoRequestDTO {
     public void setTotal(BigDecimal total) { this.total = total; }
     public String getFormaPagamento() { return formaPagamento; }
     public void setFormaPagamento(String formaPagamento) { this.formaPagamento = formaPagamento; }
+
+    // Classe auxiliar para mapear produto e quantidade no JSON
+    public static class ItemPedidoRequestDTO {
+        private Long produtoId;
+        private Integer quantidade;
+
+        public Long getProdutoId() { return produtoId; }
+        public void setProdutoId(Long produtoId) { this.produtoId = produtoId; }
+        public Integer getQuantidade() { return quantidade; }
+        public void setQuantidade(Integer quantidade) { this.quantidade = quantidade; }
+    }
 }

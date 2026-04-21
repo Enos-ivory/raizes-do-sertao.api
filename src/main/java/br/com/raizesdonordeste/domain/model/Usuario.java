@@ -19,6 +19,10 @@ public class Usuario {
     // Requisito LGPD: Demonstração de consentimento
     private boolean consentimentoTermos; // true se aceitou
     private LocalDateTime dataConsentimento;
+    private boolean aceiteTermosLgpd;
+
+    // Campo para armazenar os pontos acumulados
+    private Integer pontosFidelidade = 0;
 
     // Requisito LGPD: Finalidade e Base Legal (Armazenado como metadado ou log)
     private String finalidadeDados = "Execução de contrato e autenticação";
