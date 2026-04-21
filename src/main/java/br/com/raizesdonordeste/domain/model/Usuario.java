@@ -1,6 +1,7 @@
 package br.com.raizesdonordeste.domain.model;
 
 
+import br.com.raizesdonordeste.domain.enums.Perfil;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -15,7 +16,9 @@ public class Usuario {
     private String nome;
     private String email;
     private String senha; // Aqui vai o Hash!
-    private String perfil;
+
+    @Enumerated(EnumType.STRING)
+    private Perfil perfil;
     // Requisito LGPD: Demonstração de consentimento
     private boolean consentimentoTermos; // true se aceitou
     private LocalDateTime dataConsentimento;
