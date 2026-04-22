@@ -21,9 +21,15 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // Desabilitado para APIs REST
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/usuarios").permitAll() // Cadastro livre
-                        .requestMatchers(HttpMethod.GET, "/produtos/**").permitAll() // Cardápio livre
-                        .requestMatchers("/pedidos/**").authenticated() // Pedidos exigem login
+                        .requestMatchers(HttpMethod.POST, "/usuarios").permitAll() // Cadastro é público
+                        .requestMatchers(HttpMethod.GET, "/produtos/**").permitAll() // Cardápio é público
+
+                        // EXCLUSIVO ADMIN: Apenas administradores podem alterar o status do pedido
+                        .requestMatchers(HttpMethod.PATCH, "/pedidos/*/status").hasAuthority("ROLE_ADMIN")
+
+                        // QUALQUER LOGADO: Clientes e Admins podem ver/criar pedidos
+                        .requestMatchers("/pedidos/**").authenticated()
+
                         .anyRequest().permitAll()
                 )
                 .httpBasic(Customizer.withDefaults()); // Permite testar com Basic Auth no Postman
