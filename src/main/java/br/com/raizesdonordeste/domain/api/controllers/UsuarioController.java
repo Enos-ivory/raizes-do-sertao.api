@@ -4,6 +4,7 @@ package br.com.raizesdonordeste.domain.api.controllers;
 import br.com.raizesdonordeste.domain.model.Usuario;
 import br.com.raizesdonordeste.domain.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,4 +30,11 @@ public class UsuarioController {
     public Usuario buscarPorId(@PathVariable Long id) {
         return service.buscarPorId(id);
     }
+    // Endpoint para cumprir o Direito ao Esquecimento da LGPD
+    @DeleteMapping("/{id}/esquecimento")
+    public ResponseEntity<Void> excluirDadosLgpd(@PathVariable Long id) {
+        service.anonimizarUsuario(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

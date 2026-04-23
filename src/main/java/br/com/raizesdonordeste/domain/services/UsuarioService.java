@@ -47,11 +47,23 @@ public class UsuarioService {
 
     public void anonimizarUsuario(Long id) {
         repository.findById(id).ifPresent(usuario -> {
+            // 1. Remove a Identificação Pessoal (PII)
             usuario.setNome("USUÁRIO ANONIMIZADO");
-            usuario.setEmail("anonimo@raizesdonordeste.com");
-            usuario.setSenha("********");
+
+            // 2. Torna o email único para não quebrar o banco, mas sem identificar o dono
+            usuario.setEmail("anonimo-" + id + "@raizesdonordeste.com");
+
+            // 3. Remove credenciais de acesso
+            usuario.setSenha(null);
+
+            // 4. Revoga o consentimento (LGPD)
+            usuario.setAceiteTermosLgpd(false);
+            usuario.setConsentimentoTermos(false);
+
             repository.save(usuario);
-            logger.warn("LGPD: Dados do utilizador ID {} foram anonimizados por solicitação do titular.", id);
+
+            // Log de Auditoria para prova de conformidade
+            logger.warn("LGPD: O direito ao esquecimento foi exercido para o ID {}. Dados anonimizados.", id);
         });
     }
 }
