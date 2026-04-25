@@ -36,6 +36,11 @@ public class UsuarioService {
             usuario.setPerfil(Perfil.ROLE_CLIENTE);
         }
 
+        // 3. Ajuste LGPD: Carimba a data e hora do consentimento agora
+        if (usuario.isAceiteTermosLgpd()) {
+            usuario.setDataConsentimento(java.time.LocalDateTime.now());
+        }
+
         repository.save(usuario);
         logger.info("SEGURANÇA: Novo usuário cadastrado com perfil {}.", usuario.getPerfil());
     }

@@ -29,4 +29,13 @@ public class Usuario {
 
     // Requisito LGPD: Finalidade e Base Legal (Armazenado como metadado ou log)
     private String finalidadeDados = "Execução de contrato e autenticação";
+
+    @PrePersist
+    protected void onCreate() {
+        if (aceiteTermosLgpd) {
+            this.dataConsentimento = LocalDateTime.now();
+        }
+    }
+
+
 }
