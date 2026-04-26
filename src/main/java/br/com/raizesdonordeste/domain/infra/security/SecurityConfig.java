@@ -22,7 +22,11 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/usuarios").permitAll() // Cadastro é público
-                        .requestMatchers(HttpMethod.GET, "/produtos/**").permitAll() // Cardápio é público
+                        .requestMatchers(HttpMethod.GET, "/produtos/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/produtos/**").permitAll()// Cardápio é público
+
+                        //  Bloqueia o cadastro de produtos para não-admins
+                        .requestMatchers(HttpMethod.POST, "/produtos/**").hasAuthority("ROLE_ADMIN")
 
                         // EXCLUSIVO ADMIN: Apenas administradores podem alterar o status do pedido
                         .requestMatchers(HttpMethod.PATCH, "/pedidos/*/status").hasAuthority("ROLE_ADMIN")
@@ -41,4 +45,6 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+
 }

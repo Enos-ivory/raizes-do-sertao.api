@@ -18,4 +18,7 @@ public class Produto {
     private String descricao;
     private BigDecimal preco;
     private Integer estoque;
+    private String categoria;
+
+    private String unidade; // ex: shopping matriz
 }

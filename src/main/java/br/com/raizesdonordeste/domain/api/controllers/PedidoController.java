@@ -1,11 +1,14 @@
 package br.com.raizesdonordeste.domain.api.controllers;
 import br.com.raizesdonordeste.domain.enums.StatusPedido;
 import br.com.raizesdonordeste.domain.api.dtos.PedidoRequestDTO;
+import br.com.raizesdonordeste.domain.infra.repositories.ProdutoRepository;
+import br.com.raizesdonordeste.domain.model.Produto;
 import br.com.raizesdonordeste.domain.services.PedidoService;
 import br.com.raizesdonordeste.domain.entities.Pedido;
 import br.com.raizesdonordeste.domain.enums.CanalPedido;
 import br.com.raizesdonordeste.domain.infra.repositories.PedidoRepository;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,5 +48,13 @@ public class PedidoController {
 
         pedido.setStatus(novoStatus);
         return ResponseEntity.ok(pedidoRepository.save(pedido));
+    }
+    @Autowired
+    private ProdutoRepository repository; // ADICIONA ESTA LINHA PARA ACABAR COM O ERRO
+
+    @GetMapping("/unidade/{unidade}")
+    public ResponseEntity<List<Produto>> listarPorUnidade(@PathVariable String unidade) {
+        List<Produto> cardapio = repository.findByUnidade(unidade);
+        return ResponseEntity.ok(cardapio);
     }
 }
