@@ -31,4 +31,16 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errorResponse);
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Map<String, Object>> handleRuntimeExceptions(RuntimeException ex, HttpServletRequest request) {
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("error", "REGRA_DE_NEGOCIO");
+        errorResponse.put("message", ex.getMessage()); // Captura a mensagem "Estoque insuficiente"
+        errorResponse.put("timestamp", LocalDateTime.now().toString());
+        errorResponse.put("path", request.getRequestURI());
+
+        // Retornamos 400 (Bad Request) porque é um erro de lógica do cliente
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
 }
