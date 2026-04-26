@@ -23,7 +23,15 @@ public class PedidoRequestDTO {
     @NotNull(message = "A lista de itens não pode ser nula")
     private List<ItemPedidoRequestDTO> itens;
 
+    @NotNull(message = "O valor Pagamento é obrigatório")
+    private BigDecimal valorPagamneto;
+
     // Getters e Setters
+
+    public BigDecimal getValorPagamneto() { return valorPagamneto; }
+    public void setValorPagamneto(BigDecimal valorPagamneto) { this.valorPagamneto = valorPagamneto; }
+
+
     public List<ItemPedidoRequestDTO> getItens() { return itens; }
     public void setItens(List<ItemPedidoRequestDTO> itens) { this.itens = itens; }
 

@@ -37,7 +37,7 @@ public class PedidoService {
 
     @Transactional
     public Pedido realizarPedido(@Valid PedidoRequestDTO dto) {
-        // Busca o usuário dono do pedido
+        // Busca o usuário
         Usuario usuario = usuarioRepository.findById(dto.getClienteId())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
@@ -64,7 +64,7 @@ public class PedidoService {
             produto.setEstoque(produto.getEstoque() - itemDto.getQuantidade());
             produtoRepository.save(produto);
 
-            // Cria o item e vincula ao pedido
+            // Cria o item
             ItemPedido item = new ItemPedido();
             item.setProduto(produto);
             item.setQuantidade(itemDto.getQuantidade());
@@ -75,15 +75,28 @@ public class PedidoService {
             valorTotal = valorTotal.add(produto.getPreco().multiply(BigDecimal.valueOf(itemDto.getQuantidade())));
         }
 
-        // Aplica desconto de 10% acima de R$ 100
+        // Desconto de 10% acima de R$ 100
         if (valorTotal.compareTo(new BigDecimal("100.00")) > 0) {
             valorTotal = valorTotal.multiply(new BigDecimal("0.90"));
         }
 
+        // VALIDAÇÃO FINANCEIRA: Verifica se o valor pago cobre o total
+        // Usei "getValorPagamento" (ajuste no seu DTO se o nome for diferente)
+        if (dto.getValorPagamneto().compareTo(valorTotal) < 0) {
+            throw new RuntimeException("Erro: Valor entregue (R$ " + dto.getValorPagamneto() +
+                    ") é menor que o total do pedido (R$ " + valorTotal + ")");
+        }
+
+        // CALCULA O TROCO
+        BigDecimal troco = dto.getValorPagamneto().subtract(valorTotal);
+
+        // Preenche os dados financeiros no pedido
         pedido.setItens(itensEntidade);
         pedido.setTotal(valorTotal);
+        pedido.setValorEntregue(dto.getValorPagamneto());
+        pedido.setTroco(troco);
 
-        // Salva o pedido inicial para processar pagamento
+        // Salva o pedido inicial
         Pedido pedidoSalvo = pedidoRepository.save(pedido);
 
         // Processa pagamento simulado
@@ -103,7 +116,6 @@ public class PedidoService {
     }
 
     private void processarFidelidade(Usuario usuario, BigDecimal valorPedido) {
-        // Só gera pontos se houver aceite da LGPD
         if (usuario.isAceiteTermosLgpd()) {
             int novosPontos = valorPedido.intValue();
             int pontosAtuais = usuario.getPontosFidelidade() != null ? usuario.getPontosFidelidade() : 0;

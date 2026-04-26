@@ -36,11 +36,15 @@ public class Pedido {
 
     private BigDecimal total;
 
+    // NOVOS CAMPOS PARA O FLUXO FINANCEIRO
+    private BigDecimal valorEntregue;
+    private BigDecimal troco;
+
     private String formaPagamento;
 
     private LocalDateTime dataPedido = LocalDateTime.now();
 
-    // Getters e Setters principais
+    // Getters e Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -63,9 +67,12 @@ public class Pedido {
     public void setFormaPagamento(String formaPagamento) { this.formaPagamento = formaPagamento; }
 
     public LocalDateTime getDataPedido() { return dataPedido; }
+    public void setDataPedido(LocalDateTime dataPedido) { this.dataPedido = dataPedido; }
 
+    // GETTERS E SETTERS DOS NOVOS CAMPOS
+    public BigDecimal getValorEntregue() { return valorEntregue; }
+    public void setValorEntregue(BigDecimal valorEntregue) { this.valorEntregue = valorEntregue; }
 
-    public void setDataPedido(LocalDateTime dataPedido) {
-        this.dataPedido = dataPedido;
-    }
+    public BigDecimal getTroco() { return troco; }
+    public void setTroco(BigDecimal troco) { this.troco = troco; }
 }
