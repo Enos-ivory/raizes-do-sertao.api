@@ -1,6 +1,8 @@
 package br.com.raizesdonordeste.domain.entities;
 
 import br.com.raizesdonordeste.domain.model.Produto;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;
@@ -15,6 +17,8 @@ public class ItemPedido {
 
     @ManyToOne
     @JoinColumn(name = "pedido_id")
+    @JsonIgnore
+    @JsonBackReference
     private Pedido pedido;
 
     @ManyToOne

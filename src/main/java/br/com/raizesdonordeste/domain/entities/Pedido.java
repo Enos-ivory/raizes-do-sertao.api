@@ -2,6 +2,8 @@ package br.com.raizesdonordeste.domain.entities;
 
 import br.com.raizesdonordeste.domain.enums.CanalPedido;
 import br.com.raizesdonordeste.domain.enums.StatusPedido;
+import br.com.raizesdonordeste.domain.model.Usuario;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -16,6 +18,11 @@ public class Pedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
+
+    @JsonManagedReference
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     private List<ItemPedido> itens = new ArrayList<>();
 
@@ -27,28 +34,38 @@ public class Pedido {
     @Column(nullable = false)
     private StatusPedido status;
 
-    private Long clienteId;
-
-    @Column(nullable = false)
     private BigDecimal total;
 
     private String formaPagamento;
 
-    private LocalDateTime dataCriacao = LocalDateTime.now();
+    private LocalDateTime dataPedido = LocalDateTime.now();
 
-    // Getters e Setters
+    // Getters e Setters principais
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
+
+    public List<ItemPedido> getItens() { return itens; }
+    public void setItens(List<ItemPedido> itens) { this.itens = itens; }
+
     public CanalPedido getCanalPedido() { return canalPedido; }
     public void setCanalPedido(CanalPedido canalPedido) { this.canalPedido = canalPedido; }
+
     public StatusPedido getStatus() { return status; }
     public void setStatus(StatusPedido status) { this.status = status; }
-    public Long getClienteId() { return clienteId; }
-    public void setClienteId(Long clienteId) { this.clienteId = clienteId; }
+
     public BigDecimal getTotal() { return total; }
     public void setTotal(BigDecimal total) { this.total = total; }
+
     public String getFormaPagamento() { return formaPagamento; }
     public void setFormaPagamento(String formaPagamento) { this.formaPagamento = formaPagamento; }
-    public LocalDateTime getDataCriacao() { return dataCriacao; }
-    public void setDataCriacao(LocalDateTime dataCriacao) { this.dataCriacao = dataCriacao; }
+
+    public LocalDateTime getDataPedido() { return dataPedido; }
+
+
+    public void setDataPedido(LocalDateTime dataPedido) {
+        this.dataPedido = dataPedido;
+    }
 }

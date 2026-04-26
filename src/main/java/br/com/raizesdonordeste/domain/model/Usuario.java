@@ -2,6 +2,7 @@ package br.com.raizesdonordeste.domain.model;
 
 
 import br.com.raizesdonordeste.domain.enums.Perfil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -15,6 +16,9 @@ public class Usuario {
     private Long id;
     private String nome;
     private String email;
+
+    @Column(nullable = false)
+    @JsonIgnore
     private String senha; // Aqui vai o Hash!
 
     @Enumerated(EnumType.STRING)

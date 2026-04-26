@@ -2,7 +2,6 @@ package br.com.raizesdonordeste.domain.api.dtos;
 
 import br.com.raizesdonordeste.domain.enums.CanalPedido;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -14,14 +13,14 @@ public class PedidoRequestDTO {
     @NotNull(message = "clienteId é obrigatório")
     private Long clienteId;
 
-    @NotNull
-    @Positive(message = "O total deve ser maior que zero")
-    private BigDecimal total;
-
     @NotNull(message = "A formaPagamento é obrigatória")
     private String formaPagamento;
 
-    // Novo campo para os itens do pedido
+    // Removido @NotNull e @Positive: o Service calculará o total sozinho
+    private BigDecimal total;
+
+    // Campo para os itens do pedido
+    @NotNull(message = "A lista de itens não pode ser nula")
     private List<ItemPedidoRequestDTO> itens;
 
     // Getters e Setters
@@ -30,16 +29,21 @@ public class PedidoRequestDTO {
 
     public CanalPedido getCanalPedido() { return canalPedido; }
     public void setCanalPedido(CanalPedido canalPedido) { this.canalPedido = canalPedido; }
+
     public Long getClienteId() { return clienteId; }
     public void setClienteId(Long clienteId) { this.clienteId = clienteId; }
+
     public BigDecimal getTotal() { return total; }
     public void setTotal(BigDecimal total) { this.total = total; }
+
     public String getFormaPagamento() { return formaPagamento; }
     public void setFormaPagamento(String formaPagamento) { this.formaPagamento = formaPagamento; }
 
-    // Classe auxiliar para mapear produto e quantidade no JSON
     public static class ItemPedidoRequestDTO {
+        @NotNull(message = "ID do produto é obrigatório")
         private Long produtoId;
+
+        @NotNull(message = "Quantidade é obrigatória")
         private Integer quantidade;
 
         public Long getProdutoId() { return produtoId; }
