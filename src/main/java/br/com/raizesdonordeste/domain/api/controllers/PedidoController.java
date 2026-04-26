@@ -50,7 +50,9 @@ public class PedidoController {
         return ResponseEntity.ok(pedidoRepository.save(pedido));
     }
     @Autowired
-    private ProdutoRepository repository; // ADICIONA ESTA LINHA PARA ACABAR COM O ERRO
+    private ProdutoRepository repository;
+
+    /// exibicao cardapio
 
     @GetMapping("/unidade/{unidade}")
     public ResponseEntity<List<Produto>> listarPorUnidade(@PathVariable String unidade) {

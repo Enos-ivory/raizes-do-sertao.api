@@ -24,12 +24,12 @@ public class PedidoRequestDTO {
     private List<ItemPedidoRequestDTO> itens;
 
     @NotNull(message = "O valor Pagamento é obrigatório")
-    private BigDecimal valorPagamneto;
+    private BigDecimal valorPagamento;
 
     // Getters e Setters
 
-    public BigDecimal getValorPagamneto() { return valorPagamneto; }
-    public void setValorPagamneto(BigDecimal valorPagamneto) { this.valorPagamneto = valorPagamneto; }
+    public BigDecimal getValorPagamento() { return valorPagamento; }
+    public void setValorPagamento(BigDecimal valorPagamneto) { this.valorPagamento = valorPagamneto; }
 
 
     public List<ItemPedidoRequestDTO> getItens() { return itens; }

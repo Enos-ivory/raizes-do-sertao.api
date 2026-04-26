@@ -81,19 +81,19 @@ public class PedidoService {
         }
 
         // VALIDAÇÃO FINANCEIRA: Verifica se o valor pago cobre o total
-        // Usei "getValorPagamento" (ajuste no seu DTO se o nome for diferente)
-        if (dto.getValorPagamneto().compareTo(valorTotal) < 0) {
-            throw new RuntimeException("Erro: Valor entregue (R$ " + dto.getValorPagamneto() +
+
+        if (dto.getValorPagamento().compareTo(valorTotal) < 0) {
+            throw new RuntimeException("Erro: Valor entregue (R$ " + dto.getValorPagamento() +
                     ") é menor que o total do pedido (R$ " + valorTotal + ")");
         }
 
         // CALCULA O TROCO
-        BigDecimal troco = dto.getValorPagamneto().subtract(valorTotal);
+        BigDecimal troco = dto.getValorPagamento().subtract(valorTotal);
 
         // Preenche os dados financeiros no pedido
         pedido.setItens(itensEntidade);
         pedido.setTotal(valorTotal);
-        pedido.setValorEntregue(dto.getValorPagamneto());
+        pedido.setValorEntregue(dto.getValorPagamento());
         pedido.setTroco(troco);
 
         // Salva o pedido inicial
