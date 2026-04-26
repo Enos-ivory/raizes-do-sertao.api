@@ -37,7 +37,6 @@ public class PedidoService {
 
     @Transactional
     public Pedido realizarPedido(@Valid PedidoRequestDTO dto) {
-        // Busca o usuário
         Usuario usuario = usuarioRepository.findById(dto.getClienteId())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
@@ -48,23 +47,22 @@ public class PedidoService {
         pedido.setDataPedido(LocalDateTime.now());
         pedido.setStatus(StatusPedido.AGUARDANDO_PAGAMENTO);
 
-        BigDecimal valorTotal = BigDecimal.ZERO;
+        BigDecimal valorTotalSemDesconto = BigDecimal.ZERO;
         List<ItemPedido> itensEntidade = new ArrayList<>();
 
-        // Validação de estoque e cálculo de preço
         for (var itemDto : dto.getItens()) {
             Produto produto = produtoRepository.findById(itemDto.getProdutoId())
                     .orElseThrow(() -> new RuntimeException("Produto não encontrado ID: " + itemDto.getProdutoId()));
 
+            // Controle de Estoque: Restrição por indisponibilidade
             if (produto.getEstoque() < itemDto.getQuantidade()) {
-                throw new RuntimeException("Estoque insuficiente: " + produto.getNome());
+                throw new RuntimeException("Estoque insuficiente para o produto: " + produto.getNome());
             }
 
-            // Atualiza estoque
+            // Controle de Estoque: Saída
             produto.setEstoque(produto.getEstoque() - itemDto.getQuantidade());
             produtoRepository.save(produto);
 
-            // Cria o item
             ItemPedido item = new ItemPedido();
             item.setProduto(produto);
             item.setQuantidade(itemDto.getQuantidade());
@@ -72,47 +70,65 @@ public class PedidoService {
             item.setPedido(pedido);
             itensEntidade.add(item);
 
-            valorTotal = valorTotal.add(produto.getPreco().multiply(BigDecimal.valueOf(itemDto.getQuantidade())));
+            valorTotalSemDesconto = valorTotalSemDesconto.add(produto.getPreco().multiply(BigDecimal.valueOf(itemDto.getQuantidade())));
         }
 
-        // Desconto de 10% acima de R$ 100
-        if (valorTotal.compareTo(new BigDecimal("100.00")) > 0) {
-            valorTotal = valorTotal.multiply(new BigDecimal("0.90"));
+        BigDecimal valorFinal = valorTotalSemDesconto;
+        if (valorTotalSemDesconto.compareTo(new BigDecimal("100.00")) > 0) {
+            valorFinal = valorTotalSemDesconto.multiply(new BigDecimal("0.90"));
         }
 
-        // VALIDAÇÃO FINANCEIRA: Verifica se o valor pago cobre o total
-
-        if (dto.getValorPagamento().compareTo(valorTotal) < 0) {
-            throw new RuntimeException("Erro: Valor entregue (R$ " + dto.getValorPagamento() +
-                    ") é menor que o total do pedido (R$ " + valorTotal + ")");
+        if (dto.getValorPagamento().compareTo(valorFinal) < 0) {
+            throw new RuntimeException("Valor entregue insuficiente.");
         }
 
-        // CALCULA O TROCO
-        BigDecimal troco = dto.getValorPagamento().subtract(valorTotal);
-
-        // Preenche os dados financeiros no pedido
         pedido.setItens(itensEntidade);
-        pedido.setTotal(valorTotal);
+        pedido.setTotal(valorFinal);
         pedido.setValorEntregue(dto.getValorPagamento());
-        pedido.setTroco(troco);
+        pedido.setTroco(dto.getValorPagamento().subtract(valorFinal));
 
-        // Salva o pedido inicial
         Pedido pedidoSalvo = pedidoRepository.save(pedido);
 
-        // Processa pagamento simulado
-        boolean pagamentoAprovado = pagamentoMockService.processarPagamento(
-                pedidoSalvo.getTotal(),
-                pedidoSalvo.getFormaPagamento()
-        );
+        boolean aprovado = pagamentoMockService.processarPagamento(pedidoSalvo.getTotal(), pedidoSalvo.getFormaPagamento());
 
-        if (pagamentoAprovado) {
+        if (aprovado) {
             pedidoSalvo.setStatus(StatusPedido.PAGO);
             processarFidelidade(usuario, pedidoSalvo.getTotal());
         } else {
-            pedidoSalvo.setStatus(StatusPedido.CANCELADO);
+            cancelarPedido(pedidoSalvo.getId()); // Chama o cancelamento com estorno
+            throw new RuntimeException("Pagamento negado. O estoque foi devolvido.");
         }
 
         return pedidoRepository.save(pedidoSalvo);
+    }
+
+    // NOVA FUNCIONALIDADE: Atualização de status com regra de negócio
+    @Transactional
+    public Pedido atualizarStatusParaCozinha(Long id) {
+        Pedido pedido = pedidoRepository.findById(id).orElseThrow();
+        if (pedido.getStatus() != StatusPedido.PAGO) {
+            throw new RuntimeException("O pedido precisa estar PAGO para ir para a cozinha.");
+        }
+        pedido.setStatus(StatusPedido.PREPARANDO);
+        return pedidoRepository.save(pedido);
+    }
+
+    // NOVA FUNCIONALIDADE: Controle de estoque (Entrada/Estorno)
+    @Transactional
+    public void cancelarPedido(Long id) {
+        Pedido pedido = pedidoRepository.findById(id).orElseThrow();
+
+        if (pedido.getStatus() == StatusPedido.CANCELADO) return;
+
+        // Devolve os produtos ao estoque (Controle de entrada por cancelamento)
+        for (ItemPedido item : pedido.getItens()) {
+            Produto produto = item.getProduto();
+            produto.setEstoque(produto.getEstoque() + item.getQuantidade());
+            produtoRepository.save(produto);
+        }
+
+        pedido.setStatus(StatusPedido.CANCELADO);
+        pedidoRepository.save(pedido);
     }
 
     private void processarFidelidade(Usuario usuario, BigDecimal valorPedido) {
