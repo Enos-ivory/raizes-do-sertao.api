@@ -24,6 +24,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/usuarios").permitAll() // Cadastro é público
                         .requestMatchers(HttpMethod.GET, "/produtos/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/produtos/**").permitAll()// Cardápio é público
+                        // Dentro do seu SecurityFilterChain, adicione:
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
                         //  Bloqueia o cadastro de produtos para não-admins
                         .requestMatchers(HttpMethod.POST, "/produtos/**").hasAuthority("ROLE_ADMIN")
