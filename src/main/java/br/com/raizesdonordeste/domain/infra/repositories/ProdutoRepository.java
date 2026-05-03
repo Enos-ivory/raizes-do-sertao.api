@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface ProdutoRepository extends JpaRepository<Produto, Long> {
-    // Ao estender JpaRepository, ganhas automaticamente métodos como:
+
     // save(), findAll(), findById(), deleteById(), etc.
     List<Produto> findByUnidade(String unidade);
 }

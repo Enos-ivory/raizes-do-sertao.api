@@ -2,6 +2,7 @@ package br.com.raizesdonordeste.domain.api.dtos;
 
 import br.com.raizesdonordeste.domain.enums.CanalPedido;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -16,21 +17,24 @@ public class PedidoRequestDTO {
     @NotNull(message = "A formaPagamento é obrigatória")
     private String formaPagamento;
 
-    // Removido @NotNull e @Positive: o Service calculará o total sozinho
+    // O total é calculado pelo Service, mas deixamos o campo para mapeamento se necessário
     private BigDecimal total;
 
-    // Campo para os itens do pedido
     @NotNull(message = "A lista de itens não pode ser nula")
     private List<ItemPedidoRequestDTO> itens;
 
     @NotNull(message = "O valor Pagamento é obrigatório")
+    @Positive(message = "O valor do pagamento deve ser maior que zero")
     private BigDecimal valorPagamento;
 
-    // Getters e Setters
+    // Getters e Setters corrigidos
+    public BigDecimal getValorPagamento() {
+        return valorPagamento;
+    }
 
-    public BigDecimal getValorPagamento() { return valorPagamento; }
-    public void setValorPagamento(BigDecimal valorPagamneto) { this.valorPagamento = valorPagamneto; }
-
+    public void setValorPagamento(BigDecimal valorPagamento) {
+        this.valorPagamento = valorPagamento;
+    }
 
     public List<ItemPedidoRequestDTO> getItens() { return itens; }
     public void setItens(List<ItemPedidoRequestDTO> itens) { this.itens = itens; }
