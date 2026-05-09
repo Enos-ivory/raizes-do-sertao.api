@@ -10,6 +10,7 @@ import br.com.raizesdonordeste.domain.infra.repositories.UsuarioRepository;
 import br.com.raizesdonordeste.domain.model.Produto;
 import br.com.raizesdonordeste.domain.model.Usuario;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class PedidoService {
 
@@ -56,6 +58,7 @@ public class PedidoService {
 
             // Controle de Estoque: Restrição por indisponibilidade
             if (produto.getEstoque() < itemDto.getQuantidade()) {
+                log.warn("AUDITORIA: Tentativa de compra bloqueada. Estoque insuficiente para o produto ID: {}", produto.getId());
                 throw new RuntimeException("Estoque insuficiente para o produto: " + produto.getNome());
             }
 
@@ -94,7 +97,14 @@ public class PedidoService {
         if (aprovado) {
             pedidoSalvo.setStatus(StatusPedido.PAGO);
             processarFidelidade(usuario, pedidoSalvo.getTotal());
+
+
+            log.info("AUDITORIA: Pedido criado e pago com sucesso. Pedido ID: {}, Cliente ID: {}, Valor Total: R$ {}",
+                    pedidoSalvo.getId(), usuario.getId(), pedidoSalvo.getTotal());
         } else {
+
+            log.error("AUDITORIA: Pagamento recusado. Cancelando Pedido ID: {} e estornando estoque.", pedidoSalvo.getId());
+
             cancelarPedido(pedidoSalvo.getId()); // Chama o cancelamento com estorno
             throw new RuntimeException("Pagamento negado. O estoque foi devolvido.");
         }
@@ -102,7 +112,7 @@ public class PedidoService {
         return pedidoRepository.save(pedidoSalvo);
     }
 
-    // NOVA FUNCIONALIDADE: Atualização de status com regra de negócio
+    //  Atualização de status com regra de negócio
     @Transactional
     public Pedido atualizarStatusParaCozinha(Long id) {
         Pedido pedido = pedidoRepository.findById(id).orElseThrow();
@@ -113,7 +123,7 @@ public class PedidoService {
         return pedidoRepository.save(pedido);
     }
 
-    // NOVA FUNCIONALIDADE: Controle de estoque (Entrada/Estorno)
+    //  Controle de estoque (Entrada/Estorno)
     @Transactional
     public void cancelarPedido(Long id) {
         Pedido pedido = pedidoRepository.findById(id).orElseThrow();
