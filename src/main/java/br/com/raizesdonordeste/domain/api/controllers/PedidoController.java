@@ -1,19 +1,23 @@
 package br.com.raizesdonordeste.domain.api.controllers;
+
 import br.com.raizesdonordeste.domain.enums.StatusPedido;
 import br.com.raizesdonordeste.domain.api.dtos.PedidoRequestDTO;
+import br.com.raizesdonordeste.domain.api.dtos.PedidoResponseDTO;
 import br.com.raizesdonordeste.domain.infra.repositories.ProdutoRepository;
 import br.com.raizesdonordeste.domain.model.Produto;
+import br.com.raizesdonordeste.domain.model.Usuario;
 import br.com.raizesdonordeste.domain.services.PedidoService;
 import br.com.raizesdonordeste.domain.entities.Pedido;
 import br.com.raizesdonordeste.domain.enums.CanalPedido;
 import br.com.raizesdonordeste.domain.infra.repositories.PedidoRepository;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/pedidos")
@@ -21,42 +25,74 @@ public class PedidoController {
 
     private final PedidoService pedidoService;
     private final PedidoRepository pedidoRepository;
+    private final ProdutoRepository produtoRepository; // Ajustado para injeção limpa
 
-    public PedidoController(PedidoService pedidoService, PedidoRepository pedidoRepository) {
+    public PedidoController(PedidoService pedidoService, PedidoRepository pedidoRepository, ProdutoRepository produtoRepository) {
         this.pedidoService = pedidoService;
         this.pedidoRepository = pedidoRepository;
+        this.produtoRepository = produtoRepository;
     }
 
     @PostMapping
-    public ResponseEntity<Pedido> criarPedido(@Valid @RequestBody PedidoRequestDTO request) {
-        Pedido novoPedido = pedidoService.realizarPedido(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(novoPedido);
+    public ResponseEntity<PedidoResponseDTO> criarPedido(
+            @Valid @RequestBody PedidoRequestDTO request,
+            @AuthenticationPrincipal Usuario usuarioLogado // <-- O Spring preenche isso sozinho com o dono do Token
+    ) {
+        // Agora passamos o request e o usuário logado para o Service
+        Pedido novoPedido = pedidoService.realizarPedido(request, usuarioLogado);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(converterParaDTO(novoPedido));
     }
 
     @GetMapping
-    public ResponseEntity<List<Pedido>> listarPedidos(@RequestParam(required = false) CanalPedido canalPedido) {
+    public ResponseEntity<List<PedidoResponseDTO>> listarPedidos(@RequestParam(required = false) CanalPedido canalPedido) {
+        List<Pedido> pedidos;
         if (canalPedido != null) {
-            return ResponseEntity.ok(pedidoRepository.findByCanalPedido(canalPedido));
+            pedidos = pedidoRepository.findByCanalPedido(canalPedido);
+        } else {
+            pedidos = pedidoRepository.findAll();
         }
-        return ResponseEntity.ok(pedidoRepository.findAll());
+
+
+        List<PedidoResponseDTO> dtos = pedidos.stream()
+                .map(this::converterParaDTO)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(dtos);
     }
 
     @PatchMapping("/{id}/status")
-    public ResponseEntity<Pedido> atualizarStatus(@PathVariable Long id, @RequestBody StatusPedido novoStatus) {
+    public ResponseEntity<PedidoResponseDTO> atualizarStatus(@PathVariable Long id, @RequestBody StatusPedido novoStatus) {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
 
         pedido.setStatus(novoStatus);
-        return ResponseEntity.ok(pedidoRepository.save(pedido));
+        Pedido pedidoSalvo = pedidoRepository.save(pedido);
+
+        return ResponseEntity.ok(converterParaDTO(pedidoSalvo));
     }
-    @Autowired
-    private ProdutoRepository repository;
 
-    /// exibicao cardapio
-
+    /// Exibicao cardapio
     @GetMapping("/unidade/{unidade}")
     public ResponseEntity<List<Produto>> listarPorUnidade(@PathVariable String unidade) {
-        List<Produto> cardapio = repository.findByUnidade(unidade);
+        List<Produto> cardapio = produtoRepository.findByUnidade(unidade);
         return ResponseEntity.ok(cardapio);
+    }
+
+    private PedidoResponseDTO converterParaDTO(Pedido pedido) {
+        return new PedidoResponseDTO(
+                pedido.getId(),
+                pedido.getUsuario().getNome(), // Exibe apenas o nome, oculta senha/email/lgpd
+                pedido.getDataPedido(),
+                pedido.getStatus(),
+                pedido.getTotal(),
+                pedido.getTroco(),
+                pedido.getItens().stream()
+                        .map(item -> new PedidoResponseDTO.ItemPedidoDTO(
+                                item.getProduto().getNome(),
+                                item.getQuantidade(),
+                                item.getPrecoUnitario()
+                        )).toList()
+        );
     }
 }

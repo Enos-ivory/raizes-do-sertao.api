@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,12 +39,12 @@ public class PedidoService {
     }
 
     @Transactional
-    public Pedido realizarPedido(@Valid PedidoRequestDTO dto) {
-        Usuario usuario = usuarioRepository.findById(dto.getClienteId())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+    public Pedido realizarPedido(@Valid PedidoRequestDTO dto, Usuario usuarioLogado) {
 
+        // 1. O pedido agora é estritamente vinculado ao dono do token de segurança.
+        //  "clienteId" que o usuário tente mandar de forma maliciosa.
         Pedido pedido = new Pedido();
-        pedido.setUsuario(usuario);
+        pedido.setUsuario(usuarioLogado);
         pedido.setCanalPedido(dto.getCanalPedido());
         pedido.setFormaPagamento(dto.getFormaPagamento());
         pedido.setDataPedido(LocalDateTime.now());
@@ -96,15 +97,13 @@ public class PedidoService {
 
         if (aprovado) {
             pedidoSalvo.setStatus(StatusPedido.PAGO);
-            processarFidelidade(usuario, pedidoSalvo.getTotal());
-
+            // 2. Pontos de fidelidade vão para o dono do Token
+            processarFidelidade(usuarioLogado, pedidoSalvo.getTotal());
 
             log.info("AUDITORIA: Pedido criado e pago com sucesso. Pedido ID: {}, Cliente ID: {}, Valor Total: R$ {}",
-                    pedidoSalvo.getId(), usuario.getId(), pedidoSalvo.getTotal());
+                    pedidoSalvo.getId(), usuarioLogado.getId(), pedidoSalvo.getTotal());
         } else {
-
             log.error("AUDITORIA: Pagamento recusado. Cancelando Pedido ID: {} e estornando estoque.", pedidoSalvo.getId());
-
             cancelarPedido(pedidoSalvo.getId()); // Chama o cancelamento com estorno
             throw new RuntimeException("Pagamento negado. O estoque foi devolvido.");
         }

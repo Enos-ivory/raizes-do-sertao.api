@@ -1,16 +1,20 @@
 package br.com.raizesdonordeste.domain.model;
 
-
 import br.com.raizesdonordeste.domain.enums.Perfil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
-@Data // O Lombok gera getters e setters automaticamente
-public class Usuario {
+@Data
+public class Usuario implements UserDetails { // Implementação obrigatória
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,19 +23,16 @@ public class Usuario {
 
     @Column(nullable = false)
     @JsonIgnore
-    private String senha; // Aqui vai o Hash!
+    private String senha;
 
     @Enumerated(EnumType.STRING)
     private Perfil perfil;
-    // Requisito LGPD: Demonstração de consentimento
-    private boolean consentimentoTermos; // true se aceitou
+
+    private boolean consentimentoTermos;
     private LocalDateTime dataConsentimento;
     private boolean aceiteTermosLgpd;
 
-    // Campo para armazenar os pontos acumulados
     private Integer pontosFidelidade = 0;
-
-    // Requisito LGPD: Finalidade e Base Legal (Armazenado como metadado ou log)
     private String finalidadeDados = "Execução de contrato e autenticação";
 
     @PrePersist
@@ -41,5 +42,42 @@ public class Usuario {
         }
     }
 
+    // MÉTODOS DO USERDETAILS (Resolve o erro do SecurityFilter)
 
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+
+        String roleNome = perfil.name().startsWith("ROLE_") ? perfil.name() : "ROLE_" + perfil.name();
+        return List.of(new SimpleGrantedAuthority(roleNome));
+    }
+    @Override
+    public String getPassword() {
+        return senha;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
