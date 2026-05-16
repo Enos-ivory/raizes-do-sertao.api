@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +33,22 @@ public class PedidoController {
         this.pedidoRepository = pedidoRepository;
         this.produtoRepository = produtoRepository;
     }
+
+    @Transactional(readOnly = true)
+    @GetMapping("/meus-pedidos")
+    public ResponseEntity<List<PedidoResponseDTO>> listarMeusPedidos(
+            @AuthenticationPrincipal Usuario usuarioLogado // <-- Pegamos quem está logado pelo Token!
+    ) {
+        // Busca no banco apenas os pedidos desse usuário
+        List<Pedido> pedidos = pedidoRepository.findByUsuario(usuarioLogado);
+
+        List<PedidoResponseDTO> dtos = pedidos.stream()
+                .map(this::converterParaDTO)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(dtos);
+    }
+
 
     @PostMapping
     public ResponseEntity<PedidoResponseDTO> criarPedido(
@@ -80,9 +97,11 @@ public class PedidoController {
     }
 
     private PedidoResponseDTO converterParaDTO(Pedido pedido) {
+        String nomeCliente = (pedido.getUsuario() != null) ? pedido.getUsuario().getNome(): "Cliente nao identificado";
         return new PedidoResponseDTO(
                 pedido.getId(),
-                pedido.getUsuario().getNome(), // Exibe apenas o nome, oculta senha/email/lgpd
+                nomeCliente,
+              ///  pedido.getUsuario().getNome(), // Exibe apenas o nome, oculta senha/email/lgpd
                 pedido.getDataPedido(),
                 pedido.getStatus(),
                 pedido.getTotal(),

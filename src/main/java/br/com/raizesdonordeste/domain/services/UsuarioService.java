@@ -51,24 +51,26 @@ public class UsuarioService {
     }
 
     public void anonimizarUsuario(Long id) {
-        repository.findById(id).ifPresent(usuario -> {
-            // 1. Remove a Identificação Pessoal (PII)
-            usuario.setNome("USUÁRIO ANONIMIZADO");
+        // Força o Java a lançar um erro caso o ID não exista no banco
+        Usuario usuario = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado para anonimização com o ID: " + id));
 
-            // 2. Torna o email único para não quebrar o banco, mas sem identificar o dono
-            usuario.setEmail("anonimo-" + id + "@raizesdonordeste.com");
+        // 1. Remove a Identificação Pessoal (PII)
+        usuario.setNome("USUÁRIO ANONIMIZADO");
 
-            // 3. Remove credenciais de acesso
-            usuario.setSenha(null);
+        // 2. Torna o email único para não quebrar o banco, mas sem identificar o dono
+        usuario.setEmail("anonimo-" + id + "@raizesdonordeste.com");
 
-            // 4. Revoga o consentimento (LGPD)
-            usuario.setAceiteTermosLgpd(false);
-            usuario.setConsentimentoTermos(false);
+        // 3. Remove credenciais de acesso
+        usuario.setSenha(null);
 
-            repository.save(usuario);
+        // 4. Revoga o consentimento (LGPD)
+        usuario.setAceiteTermosLgpd(false);
+        usuario.setConsentimentoTermos(false);
 
-            // Log de Auditoria para prova de conformidade
-            logger.warn("LGPD: O direito ao esquecimento foi exercido para o ID {}. Dados anonimizados.", id);
-        });
+        repository.save(usuario);
+
+        // Log de Auditoria para prova de conformidade
+        logger.warn("LGPD: O direito ao esquecimento foi exercido para o ID {}. Dados anonimizados.", id);
     }
 }
