@@ -1,0 +1,596 @@
+{
+	"info": {
+		"_postman_id": "b7943f24-c3b8-4c31-afcd-32dd502dab08",
+		"name": "Raizes - API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "48881343"
+	},
+	"item": [
+		{
+			"name": "1. Auth",
+			"item": [
+				{
+					"name": "T01 - login valido (positivo)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"enos@teste.com\",\n    \"senha\": \"123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "T02 - Acesso sem Token (negativo)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"enos@teste.com\",\n    \"senha\": \"123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "T03 - acesso com login sem autorizacao( negativo )",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"sem@validacao.com\",\n    \"senha\": \"123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "T04 - listar usuarios (positivo) com auth admin",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBUEkgUmFpemVzIGRvIE5vcmRlc3RlIiwic3ViIjoiZW5vc0B0ZXN0ZS5jb20iLCJleHAiOjE3Nzg3NzUzNzd9.P9JUwfEQVYhYLB1v8T2hDOXJRm5DmVWcd_ljmen293M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/usuarios/list-users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios",
+								"list-users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "T05 - cadastrar novo cliente (positivo)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nome\": \"João da Silva\",\n    \"email\": \"joao.silva@teste.com\",\n    \"senha\": \"123\",\n    \"perfil\": \"ROLE_CLIENTE\",\n    \"aceiteTermosLgpd\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/usuarios",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "T06 - exclusão logica / direito ao esquecimento LGPD (positivo)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBUEkgUmFpemVzIGRvIE5vcmRlc3RlIiwic3ViIjoiZW5vc0B0ZXN0ZS5jb20iLCJleHAiOjE3Nzg3NzUzNzd9.P9JUwfEQVYhYLB1v8T2hDOXJRm5DmVWcd_ljmen293M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/usuarios/9/esquecimento",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios",
+								"9",
+								"esquecimento"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "T07 - exclusão logica / direto ao esquecimento (negativo) user inexistente",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBUEkgUmFpemVzIGRvIE5vcmRlc3RlIiwic3ViIjoiZW5vc0B0ZXN0ZS5jb20iLCJleHAiOjE3Nzg3NzUzNzd9.P9JUwfEQVYhYLB1v8T2hDOXJRm5DmVWcd_ljmen293M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/usuarios/9999999/esquecimento",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios",
+								"9999999",
+								"esquecimento"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "T08 - cadastra admin (positivo)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nome\": \"Zaratus da Silva\",\n    \"email\": \"zaratus.silva@teste.com\",\n    \"senha\": \"123\",\n    \"perfil\": \"ROLE_ADMIN\",\n    \"aceiteTermosLgpd\": true,\n    \"consentimentoTermos\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/usuarios",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"usuarios"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Produtos",
+			"item": [
+				{
+					"name": "T09 - Listar produtos(positivo)",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/produtos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"produtos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "T10 - abastecer estoque(positivo)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBUEkgUmFpemVzIGRvIE5vcmRlc3RlIiwic3ViIjoiZW5vc0B0ZXN0ZS5jb20iLCJleHAiOjE3Nzg4NjIyNzF9.JYX2o-F0UN2jeJ51-D8R8izL2GV_Qh2npsGGu0ffZHM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nome\": \"suco de limao\",\n  \"descricao\": \"suco natural\",\n  \"preco\": 10.00,\n  \"estoque\": 15,\n  \"categoria\": \"bebidas\",\n  \"unidade\": \"campinas\"\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/produtos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"produtos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "T11 - abastecer estoque (negativo) - sem autorização",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nome\": \"cafe grande\",\n  \"descricao\": \"bolo de milho com ingredientes naturais\",\n  \"preco\": 10.00,\n  \"estoque\": 1,\n  \"categoria\": \"lanche\",\n  \"unidade\": \"campinas\"\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/produtos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"produtos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "T12 - consultar saldo por unidade {ID}",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBUEkgUmFpemVzIGRvIE5vcmRlc3RlIiwic3ViIjoibWFyaWFzQGNsaWVudGUuY29tIiwiZXhwIjoxNzc4NTEzNjMyfQ.-xXPznhZbQqzsGpRvZkBSpm4GFf74y22vAmlQmSSpu4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"clienteId\":7,\n    \"canalPedido\": \"APP\",\n    \"formaPagamento\": \"PIX\",\n    \"valorPagamento\": 100.00,\n    \"itens\": [\n        {\n            \"produtoId\": 99,\n            \"quantidade\": 1\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/produtos/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"produtos",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Pedidos",
+			"item": [
+				{
+					"name": "T13 - criar pedido valido (positivo)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBUEkgUmFpemVzIGRvIE5vcmRlc3RlIiwic3ViIjoibWFyaWFzQGNsaWVudGUuY29tIiwiZXhwIjoxNzc4NTE1MDk5fQ.cNkLxRRZG_WC8J0LRYoM3hmEp9LhDMDR5FtrteM13pA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"clienteId\": 6,\n    \"canalPedido\": \"APP\",\n    \"formaPagamento\": \"PIX\",\n    \"valorPagamento\": 100.00,\n    \"itens\": [\n        {\n            \"produtoId\": 1,\n            \"quantidade\": 1\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/pedidos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"pedidos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "T14 - Pedido com dados ausente (negativo) . sem ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBUEkgUmFpemVzIGRvIE5vcmRlc3RlIiwic3ViIjoibWFyaWFzQGNsaWVudGUuY29tIiwiZXhwIjoxNzc4Mzg3MTQ5fQ.6pxs8YOLe5oaUZE2oyDSOCqDUJXzGgPxKHZtsIRBwPw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"canalPedido\": \"APP\",\n    \"formaPagamento\": \"PIX\",\n    \"valorPagamento\": 100.00,\n    \"itens\": [\n        { \"produtoId\": 1, \"quantidade\": 1 }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/pedidos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"pedidos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "T15 - produto inexistente (negativo)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBUEkgUmFpemVzIGRvIE5vcmRlc3RlIiwic3ViIjoibWFyaWFzQGNsaWVudGUuY29tIiwiZXhwIjoxNzc4NTEzNjMyfQ.-xXPznhZbQqzsGpRvZkBSpm4GFf74y22vAmlQmSSpu4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"clienteId\":7,\n    \"canalPedido\": \"APP\",\n    \"formaPagamento\": \"PIX\",\n    \"valorPagamento\": 100.00,\n    \"itens\": [\n        {\n            \"produtoId\": 99,\n            \"quantidade\": 1\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/pedidos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"pedidos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "T16 -atualizar status do pedido (positivo)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBUEkgUmFpemVzIGRvIE5vcmRlc3RlIiwic3ViIjoiZW5vc0B0ZXN0ZS5jb20iLCJleHAiOjE3Nzg5NjAwMjd9._WBrv1hzDt2CYSXY7eGxKmOB2LlG7A465hQwd8CDMBc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\"PREPARANDO\"",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/pedidos/1/status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"pedidos",
+								"1",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "T17 - atualizar status do pedido (negativo)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBUEkgUmFpemVzIGRvIE5vcmRlc3RlIiwic3ViIjoiZW5vc0B0ZXN0ZS5jb20iLCJleHAiOjE3Nzg5NjAwMjd9._WBrv1hzDt2CYSXY7eGxKmOB2LlG7A465hQwd8CDMBc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\"PREPARAND\"\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/pedidos/9999999/status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"pedidos",
+								"9999999",
+								"status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": ""
+		}
+	]
+}
