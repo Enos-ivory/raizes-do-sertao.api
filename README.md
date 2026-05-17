@@ -85,4 +85,40 @@ forma imediata, sem nenhuma dependência de inserções manuais na base.
 5. DOCUMENTAÇÃO DA API (SWAGGER)
 ------------------------------------------------------------------------
 A API conta com documentação viva e interativa via Swagger. Com o servidor
-rodando localmente, todas as rotas da aplicação, payloads de
+rodando localmente, todas as rotas da aplicação, payloads de requisição
+e códigos de resposta HTTP podem ser visualizados e testados diretamente
+pelo navegador.
+
+Link de acesso ao Swagger UI:
+-> http://localhost:8080/swagger-ui/index.html
+
+------------------------------------------------------------------------
+6. EXECUÇÃO DAS SUÍTES DE TESTES (POSTMAN)
+------------------------------------------------------------------------
+Dentro do diretório /postman deste repositório, encontra-se o arquivo
+JSON contendo todas as requisições prontas para testar a API.
+
+Como o Postman não exporta valores locais de variáveis por segurança,
+siga os passos abaixo ao importar a coleção para evitar URLs travadas:
+
+1. Importe o arquivo JSON da coleção no seu Postman.
+2. Clique em cima do nome da coleção mãe ("Raízes do Nordeste").
+3. Na janela central, acesse a sub-aba "Variables".
+4. Localize a variável "base_url".
+5. Na coluna "Initial Value" (Valor Inicial), preencha com:
+   http://localhost:8080
+6. Pressione Ctrl + S para salvar.
+
+------------------------------------------------------------------------
+7. COMO INICIALIZAR O PROJETO (PASSO A PASSO)
+------------------------------------------------------------------------
+1. Certifique-se de criar o schema no seu banco MySQL antes de iniciar:
+   CREATE DATABASE projeto_back_raizes;
+2. Abra o terminal na pasta raiz do projeto (onde fica o pom.xml).
+3. Garanta que o arquivo .env foi configurado corretamente.
+4. Execute o comando Maven para baixar as dependências e rodar a API:
+   mvn spring-boot:run
+5. O servidor Tomcat iniciará na porta 8080. O mecanismo de Migrations
+   irá gerar a estrutura das tabelas e o Seed populará os dados base
+   automaticamente, deixando o sistema pronto para testes.
+   ========================================================================
