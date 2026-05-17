@@ -21,4 +21,7 @@ public class Produto {
     private String categoria;
 
     private String unidade; // ex: shopping matriz
+
+    public void setQuantidadeEstoque(int i) {
+    }
 }

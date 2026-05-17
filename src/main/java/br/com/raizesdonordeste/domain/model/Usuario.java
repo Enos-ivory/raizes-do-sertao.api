@@ -80,4 +80,7 @@ public class Usuario implements UserDetails { // Implementação obrigatória
     public boolean isEnabled() {
         return true;
     }
+
+    public void setConsentimentoLgpd(boolean b) {
+    }
 }
