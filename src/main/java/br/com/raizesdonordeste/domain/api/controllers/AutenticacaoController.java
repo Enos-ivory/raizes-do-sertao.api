@@ -29,7 +29,7 @@ public class AutenticacaoController {
         var authenticationToken = new UsernamePasswordAuthenticationToken(dados.email(), dados.senha());
         var authentication = manager.authenticate(authenticationToken);
 
-        // 1. Aqui a mágica acontece: Pegamos o usuário no formato do Spring (UserDetails)
+        //  Pegamos o usuário no formato do Spring (UserDetails)
         var usuarioSpring = (UserDetails) authentication.getPrincipal();
 
         // 2. Extraímos o e-mail dele e mandamos para o TokenService

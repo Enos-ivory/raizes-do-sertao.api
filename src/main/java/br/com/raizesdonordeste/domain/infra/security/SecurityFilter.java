@@ -31,7 +31,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         if (tokenJWT != null) {
             var subject = tokenService.getSubject(tokenJWT);
 
-            // CORREÇÃO AQUI: Adicionado o .orElseThrow() para abrir o Optional
+            // Adicionado o .orElseThrow() para abrir o Optional
             var usuario = repository.findByEmail(subject)
                     .orElseThrow(() -> new RuntimeException("Usuário não encontrado no token"));
 

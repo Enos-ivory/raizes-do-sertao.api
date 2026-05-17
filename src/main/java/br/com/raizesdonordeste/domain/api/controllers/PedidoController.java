@@ -53,7 +53,7 @@ public class PedidoController {
     @PostMapping
     public ResponseEntity<PedidoResponseDTO> criarPedido(
             @Valid @RequestBody PedidoRequestDTO request,
-            @AuthenticationPrincipal Usuario usuarioLogado // <-- O Spring preenche isso sozinho com o dono do Token
+            @AuthenticationPrincipal Usuario usuarioLogado // <-- O Spring preenche com o dono do Token
     ) {
         // Agora passamos o request e o usuário logado para o Service
         Pedido novoPedido = pedidoService.realizarPedido(request, usuarioLogado);

@@ -41,7 +41,7 @@ public class PedidoService {
     @Transactional
     public Pedido realizarPedido(@Valid PedidoRequestDTO dto, Usuario usuarioLogado) {
 
-        // 1. O pedido agora é estritamente vinculado ao dono do token de segurança.
+        //  pedido agora é estritamente vinculado ao dono do token de segurança.
         //  "clienteId" que o usuário tente mandar de forma maliciosa.
         Pedido pedido = new Pedido();
         pedido.setUsuario(usuarioLogado);
@@ -97,7 +97,7 @@ public class PedidoService {
 
         if (aprovado) {
             pedidoSalvo.setStatus(StatusPedido.PAGO);
-            // 2. Pontos de fidelidade vão para o dono do Token
+            // Pontos de fidelidade vão para o dono do Token
             processarFidelidade(usuarioLogado, pedidoSalvo.getTotal());
 
             log.info("AUDITORIA: Pedido criado e pago com sucesso. Pedido ID: {}, Cliente ID: {}, Valor Total: R$ {}",

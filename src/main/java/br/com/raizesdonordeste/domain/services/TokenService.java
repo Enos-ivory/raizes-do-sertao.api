@@ -1,6 +1,6 @@
 package br.com.raizesdonordeste.domain.services;
 
-import br.com.raizesdonordeste.domain.model.Usuario;
+
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -19,21 +19,21 @@ public class TokenService {
     @Value("${api.security.token.secret}")
     private String secret;
 
-    // 1. Mudamos o parâmetro para receber uma String (email)
+    // o parâmetro para receber uma String (email)
     public String gerarToken(String email) {
         try {
             var algoritmo = Algorithm.HMAC256(secret);
 
             return JWT.create()
                     .withIssuer("API Raizes do Nordeste")
-                    .withSubject(email) // 2. Passamos a String direto aqui
+                    .withSubject(email) // String direto aqui
                     .withExpiresAt(dataExpiracao())
                     .sign(algoritmo);
         } catch (JWTCreationException exception){
             throw new RuntimeException("Erro ao gerar token JWT", exception);
         }
     }
-    //// todo que será usado depois pelo Filtro de Segurança para validar as requisições
+    //// todo que será usado depois pelo Filtro de Segurança para validar as requisições///
 
     public String getSubject(String tokenJWT) {
         try {

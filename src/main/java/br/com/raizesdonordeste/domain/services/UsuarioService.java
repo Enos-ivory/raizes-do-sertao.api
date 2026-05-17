@@ -6,7 +6,7 @@ import br.com.raizesdonordeste.domain.model.Usuario;
 import br.com.raizesdonordeste.domain.enums.Perfil;
 import br.com.raizesdonordeste.domain.infra.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder; // Use o oficial do Spring
+import org.springframework.security.crypto.password.PasswordEncoder; //  oficial do Spring
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -27,16 +27,16 @@ public class UsuarioService {
     }
 
     public void salvarComSenhaSegura(Usuario usuario) {
-        // 1. Criptografia compatível com AutenticacaoService
+        // Criptografia compatível com AutenticacaoService
         String senhaCriptografada = passwordEncoder.encode(usuario.getSenha());
         usuario.setSenha(senhaCriptografada);
 
-        // 2. Lógica de Perfis (Roles): Define um padrão caso não seja enviado
+        //  Lógica de Perfis (Roles): Define um padrão caso não seja enviado
         if (usuario.getPerfil() == null) {
             usuario.setPerfil(Perfil.ROLE_CLIENTE);
         }
 
-        // 3. Ajuste LGPD: Carimba a data e hora do consentimento agora
+        // Ajuste LGPD: Carimba a data e hora do consentimento
         if (usuario.isAceiteTermosLgpd()) {
             usuario.setDataConsentimento(java.time.LocalDateTime.now());
         }
@@ -55,16 +55,16 @@ public class UsuarioService {
         Usuario usuario = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado para anonimização com o ID: " + id));
 
-        // 1. Remove a Identificação Pessoal (PII)
+        // Remove a Identificação Pessoal (PII)
         usuario.setNome("USUÁRIO ANONIMIZADO");
 
-        // 2. Torna o email único para não quebrar o banco, mas sem identificar o dono
+        // Torna o email único para não quebrar o banco, mas sem identificar o dono
         usuario.setEmail("anonimo-" + id + "@raizesdonordeste.com");
 
-        // 3. Remove credenciais de acesso
+        // Remove credenciais de acesso
         usuario.setSenha(null);
 
-        // 4. Revoga o consentimento (LGPD)
+        //  Revoga o consentimento (LGPD)
         usuario.setAceiteTermosLgpd(false);
         usuario.setConsentimentoTermos(false);
 
