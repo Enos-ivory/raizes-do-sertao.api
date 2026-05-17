@@ -50,8 +50,11 @@ src/main/resources/application.properties da seguinte forma:
 spring.application.name=domain
 
 spring.datasource.url=jdbc:mysql://localhost:3306/projeto_back_raizes
+
 spring.datasource.username=${DB_USER}
+
 spring.datasource.password=${DB_PASS}
+
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
 spring.jpa.hibernate.ddl-auto=update
