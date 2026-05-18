@@ -62,7 +62,7 @@ public class UsuarioService {
         usuario.setEmail("anonimo-" + id + "@raizesdonordeste.com");
 
         // Remove credenciais de acesso
-        usuario.setSenha(null);
+        usuario.setSenha(" ");
 
         //  Revoga o consentimento (LGPD)
         usuario.setAceiteTermosLgpd(false);

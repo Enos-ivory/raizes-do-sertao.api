@@ -27,7 +27,6 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-
         if (usuarioRepository.count() == 0) {
             Usuario admin = new Usuario();
             admin.setNome("Administrador Raízes");
@@ -47,19 +46,19 @@ public class DataInitializer implements CommandLineRunner {
             Produto p1 = new Produto();
             p1.setNome("Baião de Dois");
             p1.setPreco(new BigDecimal("35.00"));
-            p1.setQuantidadeEstoque(50);
+            p1.setEstoque(50); // Usa o método gerado pelo Lombok apontando para a variável 'estoque'
             produtoRepository.save(p1);
 
             Produto p2 = new Produto();
             p2.setNome("Carne de Sol com Macaxeira");
             p2.setPreco(new BigDecimal("42.50"));
-            p2.setQuantidadeEstoque(30);
+            p2.setEstoque(30); // Usa o método gerado pelo Lombok apontando para a variável 'estoque'
             produtoRepository.save(p2);
 
             Produto p3 = new Produto();
             p3.setNome("Suco de Caju Nativo");
             p3.setPreco(new BigDecimal("8.00"));
-            p3.setQuantidadeEstoque(100);
+            p3.setEstoque(100); // CORRIGIDO: Alterado de setQuantidadeEstoque para setEstoque
             produtoRepository.save(p3);
 
             System.out.println("🌱 SEED: Cardápio inicial populado com produtos bases!");

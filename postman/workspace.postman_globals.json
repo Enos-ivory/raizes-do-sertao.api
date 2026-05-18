@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"enos@teste.com\",\n    \"senha\": \"123\"\n}",
+							"raw": "{\n  \"email\": \"admin@raizesdonordeste.com\",\n  \"senha\": \"admin123\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -332,7 +332,7 @@
 					"response": []
 				},
 				{
-					"name": "T12 - consultar saldo por unidade {ID}",
+					"name": "T12 - consultar saldo por unidade {ID}  (negativo)",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},

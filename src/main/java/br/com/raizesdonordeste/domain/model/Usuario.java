@@ -1,7 +1,7 @@
 package br.com.raizesdonordeste.domain.model;
 
 import br.com.raizesdonordeste.domain.enums.Perfil;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,7 +22,7 @@ public class Usuario implements UserDetails { // Implementação obrigatória
     private String email;
 
     @Column(nullable = false)
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String senha;
 
     @Enumerated(EnumType.STRING)
