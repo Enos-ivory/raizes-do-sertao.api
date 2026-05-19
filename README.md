@@ -1,6 +1,6 @@
-
+========================================================================
 API RAÍZES DO NORDESTE
-
+========================================================================
 
 Este repositório contém o backend completo da API RESTful para a rede de
 restaurantes Raízes do Nordeste, desenvolvida como Projeto Multidisciplinar
@@ -8,7 +8,8 @@ para a trilha de Back-end (Análise e Desenvolvimento de Sistemas).
 
 A aplicação adota boas práticas de Engenharia de Software, Programação
 Defensiva, segurança com autenticação JWT e conformidade nativa com as
-diretrizes da LGPD (Lei Geral de Proteção de Dados).
+diretrizes da LGPD (Lei Geral de Proteção de Dados), garantindo o
+rastreamento multicanal das vendas (App, Totem, Balcão e Web).
 
 ------------------------------------------------------------------------
 1. TECNOLOGIAS UTILIZADAS
@@ -73,10 +74,10 @@ vazias e realiza o Seed automático dos seguintes registros:
 - 1 Usuário Administrador Base:
     * E-mail: admin@raizesdonordeste.com
     * Senha: admin123 (criptografada em hash via BCrypt)
-- 3 Produtos Iniciais no Cardápio:
-    * Baião de Dois
-    * Carne de Sol com Macaxeira
-    * Suco de Caju Nativo
+- 3 Produtos Iniciais no Cardápio (com estoque validado):
+    * Baião de Dois (Estoque: 50)
+    * Carne de Sol com Macaxeira (Estoque: 30)
+    * Suco de Caju Nativo (Estoque: 100)
 
 Isso permite testar o login administrativo e a listagem de produtos de
 forma imediata, sem nenhuma dependência de inserções manuais na base.
@@ -95,11 +96,12 @@ Link de acesso ao Swagger UI:
 ------------------------------------------------------------------------
 6. EXECUÇÃO DAS SUÍTES DE TESTES (POSTMAN)
 ------------------------------------------------------------------------
-Dentro do diretório /postman deste repositório, encontra-se o arquivo
-JSON contendo todas as requisições prontas para testar a API.
+Dentro do diretório /postman deste repositório, encontram-se os arquivos
+JSON da coleção contendo 17 testes estruturados. Essa suíte abrange desde
+o fluxo crítico de vendas (Happy Paths) até a simulação de exceções
+(Programação Defensiva) e validação da LGPD.
 
-Como o Postman não exporta valores locais de variáveis por segurança,
-siga os passos abaixo ao importar a coleção para evitar URLs travadas:
+Siga os passos abaixo ao importar a coleção para evitar URLs travadas:
 
 1. Importe o arquivo JSON da coleção no seu Postman.
 2. Clique em cima do nome da coleção mãe ("Raízes do Nordeste").
@@ -115,10 +117,10 @@ siga os passos abaixo ao importar a coleção para evitar URLs travadas:
 1. Certifique-se de criar o schema no seu banco MySQL antes de iniciar:
    CREATE DATABASE projeto_back_raizes;
 2. Abra o terminal na pasta raiz do projeto (onde fica o pom.xml).
-3. Garanta que o arquivo .env foi configurado corretamente.
+3. Garanta que o arquivo .env foi criado e configurado corretamente.
 4. Execute o comando Maven para baixar as dependências e rodar a API:
    mvn spring-boot:run
 5. O servidor Tomcat iniciará na porta 8080. O mecanismo de Migrations
    irá gerar a estrutura das tabelas e o Seed populará os dados base
-   automaticamente, deixando o sistema pronto para testes.
+   automaticamente, deixando o sistema pronto para testes e uso.
    ========================================================================
