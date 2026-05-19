@@ -1,6 +1,6 @@
-========================================================================
+
 API RAÍZES DO NORDESTE
-========================================================================
+
 
 Este repositório contém o backend completo da API RESTful para a rede de
 restaurantes Raízes do Nordeste, desenvolvida como Projeto Multidisciplinar
